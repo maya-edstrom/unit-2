@@ -1,3 +1,35 @@
-#mapid { height: 180px; }
+#map {
+    height: 700px;
+    width: 80%;
+    display: inline-block;
+}
 
-/*Add CSS styles here*/
+
+#panel {
+    width: 25%;
+    padding: 20px;
+    display: inline-block;
+    vertical-align: top;
+    text-align: center;
+    line-height: 42px;
+}
+
+.range-slider {
+    width: 55%;
+}
+
+.step {
+    width: 20%;
+}
+
+.step img {
+    width: 100%;
+}
+
+#forward {
+    float: right;
+}
+
+#reverse {
+    float: left;
+}

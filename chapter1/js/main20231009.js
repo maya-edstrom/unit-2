@@ -73,6 +73,7 @@ function createPropSymbols(data){
             //Step 6: Give each feature's circle marker a radius based on its attribute value
             geojsonMarkerOptions.radius = calcPropRadius(attValue);
 
+
             //create circle markers
             return L.circleMarker(latlng, geojsonMarkerOptions);
         }
