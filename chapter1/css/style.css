@@ -1,5 +1,5 @@
 #map {
-    height: 700px;
+    height: 600px;
     width: 80%;
     display: inline-block;
 }
@@ -33,3 +33,6 @@
 #reverse {
     float: left;
 }
+
+h1 {color: black; font-size: 38px; text-align: left; margin-bottom: 10px;}
+p {color: black; font-size: 25px; text-align: left;}
