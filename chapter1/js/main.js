@@ -1,14 +1,15 @@
 //declare map variable globally so all functions have access
 let map;
 let minValue;
+let attributes;
+let geojsonData;
+
 
 //step 1 create map
 function createMap(){
-
-    //create the map
     map = L.map('map', {
-        center: [46.4419, -93.3655],
-        zoom: 6
+        center: [45.7, -93.4],
+        zoom: 8
     });
 
     //add OSM base tilelayer
@@ -18,7 +19,7 @@ function createMap(){
 
     //call getData function
     getData(map);
-};
+}
 
 function calculateMinValue(data){
     //create empty array to store all data values
@@ -34,8 +35,7 @@ function calculateMinValue(data){
         }
     }
     //get minimum value of our array
-    let minValue = Math.min(...allValues)
-
+    minValue = Math.min(...allValues)
     return minValue;
 }
 
@@ -45,17 +45,11 @@ function calcPropRadius(attValue) {
     let minRadius = 5;
     //Flannery Appearance Compensation formula
     let radius = 1.0083 * Math.pow(attValue/minValue,0.5715) * minRadius
-
     return radius;
-};
+}
 
 //Step 3: Add circle markers for point features to the map
 function createPropSymbols(data, attributes){
-
-    //Step 4: Determine which attribute to visualize with proportional symbols
-    let attribute = "AvgComTime2010";
-
-    //create marker options
     let geojsonMarkerOptions = {
         fillColor: "#ff7800",
         color: "#fff",
@@ -68,44 +62,38 @@ function createPropSymbols(data, attributes){
     L.geoJson(data, {
         pointToLayer: function (feature, latlng) {
             //Step 5: For each feature, determine its value for the selected attribute
-            var attValue = Number(feature.properties[attribute]);
-
+            let attValue = Number(feature.properties[attributes]);
             //Step 6: Give each feature's circle marker a radius based on its attribute value
             geojsonMarkerOptions.radius = calcPropRadius(attValue);  // Changed from options to geojsonMarkerOptions
-
             //create circle marker layer
-            var layer = L.circleMarker(latlng, geojsonMarkerOptions);  // Changed from options to geojsonMarkerOptions
-
+            let layer = L.circleMarker(latlng, geojsonMarkerOptions);  // Changed from options to geojsonMarkerOptions
             //build popup content string starting with city
-            var popupContent = "<p><b>City:</b> " + feature.properties.city + "</p>";
-
+            let popupContent = "<p><b>City:</b> " + feature.properties.city + "</p>";
             // Add the attribute value to the popup content string
-            popupContent += "<p><b>Avg Commute Time (2010):</b> " + attValue + " minutes" + "</p>";
-
-            // Bind the popup to the circle marker
-            layer.bindPopup(popupContent);  // Added this line to bind popup
-
+            popupContent += "<p><b>Avg Commute Time (" + attributes.slice(-4) + "):</b> " + attValue + " minutes" + "</p>";
+            layer.bindPopup(popupContent);
             return layer;
-
-            //create circle markers
-            return L.circleMarker(latlng, geojsonMarkerOptions);  // Changed from options to geojsonMarkerOptions
         }
     }).addTo(map);
-};
+}
 
 function createSequenceControls(){
     //create range input element (slider)
-    var slider = "<input class='range-slider' type='range'></input>";
+    var slider = "<input class='range-slider' type='range'>";
     document.querySelector("#panel").insertAdjacentHTML('beforeend',slider);
-
-    //set slider attributes
-    document.querySelector(".range-slider").max = 14;
-    document.querySelector(".range-slider").min = 0;
-    document.querySelector(".range-slider").value = 0;
-    document.querySelector(".range-slider").step = 1;
     document.querySelector('#panel').insertAdjacentHTML('beforeend','<button class="step" id="reverse">Reverse</button>');
     document.querySelector('#panel').insertAdjacentHTML('beforeend','<button class="step" id="forward">Forward</button>');
-};
+
+    var sliderElement = document.querySelector(".range-slider");
+    sliderElement.max = attributes.length - 1;
+    sliderElement.min = 0;
+    sliderElement.value = 0;
+    sliderElement.step = 1;
+
+    sliderElement.addEventListener('input', function(){
+        updateMap(sliderElement.value);
+    });
+}
 
 //build an attributes array from the data
 function processData(data){
@@ -120,33 +108,38 @@ function processData(data){
         //only take attributes with population values
         if (attribute.indexOf("AvgComTime") > -1){
             attributes.push(attribute);
-        };
-    };
-
-    //check result
-    console.log(attributes);
+        }
+    }
 
     return attributes;
-};
+}
 
+function updateMap(value){
+    let attribute = attributes[value];
+    map.eachLayer(function(layer) {
+        if (layer instanceof L.CircleMarker) {
+            map.removeLayer(layer);
+
+        }
+    });
+    createPropSymbols(geojsonData, attribute);
+}
 //Step 2: Import GeoJSON data
-function getData(map){
+function getData(map) {
     //load the data
     fetch("data/AvgComTimesGJSON.geojson")
-        .then(function(response){
+        .then(function (response) {
             return response.json();
         })
-        .then(function(json){
-            //create an attributes array
-            let attributes = processData(json);
-            //calculate minimum data value
+        .then(function (json) {
+            geojsonData = json;
+            attributes = processData(json);
             minValue = calculateMinValue(json);
-            //call function to create proportional symbols
-            createPropSymbols(json);
+            createPropSymbols(json, attributes[0]);
             createSequenceControls();
-        })
-};
 
+        })
+}
 
 
 document.addEventListener('DOMContentLoaded',createMap)
