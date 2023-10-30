@@ -78,44 +78,64 @@ function createPropSymbols(data, attributes){
 }
 
 function createSequenceControls(){
-    //create range input element (slider)
+    // Create an HTML input element of type 'range' for the slider
     var slider = "<input class='range-slider' type='range'>";
+    // Insert the slider into the DOM under the element with the ID 'panel'
     document.querySelector("#panel").insertAdjacentHTML('beforeend',slider);
+
+    // Insert a 'Reverse' button into the DOM
     document.querySelector('#panel').insertAdjacentHTML('beforeend','<button class="step" id="reverse">Reverse</button>');
+    // Insert a 'Forward' button into the DOM
     document.querySelector('#panel').insertAdjacentHTML('beforeend','<button class="step" id="forward">Forward</button>');
 
+    // Grab the slider element from the DOM
     var sliderElement = document.querySelector(".range-slider");
+    // Set the maximum value of the slider to be one less than the length of the attributes array
     sliderElement.max = attributes.length - 1;
+    // Set the minimum value of the slider to 0
     sliderElement.min = 0;
+    // Set the initial value of the slider to 0
     sliderElement.value = 0;
+    // Set the step size to 1, so the slider moves in increments of 1
     sliderElement.step = 1;
 
+    // Add an event listener to the slider to call 'updateMap' function when the value changes
     sliderElement.addEventListener('input', function(){
         updateMap(sliderElement.value);
     });
 
-    // After inserting buttons, grab them using their IDs
+    // Get the 'Reverse' button by its ID
     var reverseButton = document.getElementById("reverse");
+    // Get the 'Forward' button by its ID
     var forwardButton = document.getElementById("forward");
 
-    // Add event listeners to buttons
+    // Add an event listener to the 'Reverse' button
     reverseButton.addEventListener("click", function() {
+        // Re-grab the slider element
         let sliderElement = document.querySelector(".range-slider");
+        // Check if the slider value is greater than 0
         if(sliderElement.value > 0) {
+            // Decrease the slider value by 1
             sliderElement.value--;
+            // Update the map with the new slider value
             updateMap(sliderElement.value);
         }
     });
 
+    // Add an event listener to the 'Forward' button
     forwardButton.addEventListener("click", function() {
-    let sliderElement = document.querySelector(".range-slider");
+        // Re-grab the slider element
+        let sliderElement = document.querySelector(".range-slider");
+        // Check if the slider value is less than the maximum allowed value
         if(sliderElement.value < attributes.length - 1) {
+            // Increase the slider value by 1
             sliderElement.value++;
+            // Update the map with the new slider value
             updateMap(sliderElement.value);
         }
     });
-
 }
+
 
 //build an attributes array from the data
 function processData(data){
