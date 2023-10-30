@@ -17,4 +17,4 @@ To use this repository, simply clone it and open the `index.html` file located i
 
 ## Live Demo
 
-For a live demo, visit [GitHub Pages Live Demo](https://sounny.github.io/unit-2-maya-main/chapter1/index.html).
+For a live demo, visit [GitHub Pages Live Demo](https://sounny.github.io/unit-2-maya/chapter1/index.html).
