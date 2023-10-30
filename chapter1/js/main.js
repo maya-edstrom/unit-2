@@ -93,6 +93,28 @@ function createSequenceControls(){
     sliderElement.addEventListener('input', function(){
         updateMap(sliderElement.value);
     });
+
+    // After inserting buttons, grab them using their IDs
+    var reverseButton = document.getElementById("reverse");
+    var forwardButton = document.getElementById("forward");
+
+    // Add event listeners to buttons
+    reverseButton.addEventListener("click", function() {
+        let sliderElement = document.querySelector(".range-slider");
+        if(sliderElement.value > 0) {
+            sliderElement.value--;
+            updateMap(sliderElement.value);
+        }
+    });
+
+    forwardButton.addEventListener("click", function() {
+    let sliderElement = document.querySelector(".range-slider");
+        if(sliderElement.value < attributes.length - 1) {
+            sliderElement.value++;
+            updateMap(sliderElement.value);
+        }
+    });
+
 }
 
 //build an attributes array from the data
